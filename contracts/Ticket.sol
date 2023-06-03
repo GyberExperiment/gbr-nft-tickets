@@ -12,6 +12,7 @@ interface IERC20 {
 
 contract NFTTicket is ERC721 {
     struct Ticket {
+        address owner;
         string first_name;
         string last_name;
     }
@@ -43,15 +44,15 @@ contract NFTTicket is ERC721 {
         require(gbrToken.transferFrom(msg.sender, address(this), ticketPrice), "Error in the transfer of GBR tokens to purchase a ticket");
 
         ticketsCount++;
-        _tickets[ticketsCount] = Ticket(first_name, last_name);
+        _tickets[ticketsCount] = Ticket(msg.sender, first_name, last_name);
 
         _safeMint(msg.sender, ticketsCount);
     }
 
-    function getTicketInfo(uint256 tokenId) public view returns (string memory, string memory) {
+    function getTicketInfo(uint256 tokenId) public view returns (address, string memory, string memory) {
         require(_exists(tokenId), "Token does not exist");
 
         Ticket memory ticket = _tickets[tokenId];
-        return (ticket.first_name, ticket.last_name);
+        return (ticket.owner, ticket.first_name, ticket.last_name);
     }
 }
